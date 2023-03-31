@@ -1,3 +1,5 @@
+package reference_code.alterego;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;

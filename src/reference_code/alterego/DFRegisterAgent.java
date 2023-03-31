@@ -1,23 +1,32 @@
+package reference_code.alterego;
+
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
-public class DFSearchAgent extends Agent {
+public class DFRegisterAgent extends Agent {
 
 	protected void setup() {
-		DFAgentDescription template = new DFAgentDescription();
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType("book-selling");
-		template.addServices(sd);
+		sd.setName(getLocalName());
+		dfd.addServices(sd);
 		try {
-			DFAgentDescription[] result = DFService.search(this, template);
-			for(int i=0; i<result.length; ++i) {
-				System.out.println("Found " + result[i].getName());
-			}
+			DFService.register(this, dfd);
 		} catch(FIPAException fe) {
 			fe.printStackTrace();
+		}
+	}
+
+	protected void takeDown() {
+		try {
+			DFService.deregister(this);  
+		} catch(FIPAException e) {
+			e.printStackTrace();
 		}
 	}
 

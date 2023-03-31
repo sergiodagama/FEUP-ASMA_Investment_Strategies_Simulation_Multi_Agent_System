@@ -1,4 +1,4 @@
-package alterego;
+package reference_code.alterego;
 
 import jade.content.AgentAction;
 

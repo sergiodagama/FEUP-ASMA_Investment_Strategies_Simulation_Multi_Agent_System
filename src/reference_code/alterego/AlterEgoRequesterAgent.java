@@ -1,13 +1,14 @@
+package reference_code.alterego;
+
 import java.util.Vector;
 
-import alterego.AlterEgo;
-import alterego.AlterEgoOntology;
-import alterego.SendAlterEgo;
+import reference_code.alterego.AlterEgo;
+import reference_code.alterego.AlterEgoOntology;
+import reference_code.alterego.SendAlterEgo;
 
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
-import jade.content.lang.leap.LEAPCodec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;

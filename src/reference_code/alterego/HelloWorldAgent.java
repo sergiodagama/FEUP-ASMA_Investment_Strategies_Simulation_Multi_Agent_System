@@ -1,3 +1,5 @@
+package reference_code.alterego;
+
 import jade.core.Agent;
 
 public class HelloWorldAgent extends Agent {

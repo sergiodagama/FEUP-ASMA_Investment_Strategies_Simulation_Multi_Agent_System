@@ -1,2 +1,0 @@
-# FEUP-ASMA_Investment_Strategies_Simulation_Multi_Agent_System
-US Stock Market Investment Strategies Simulation Multi-Agent System

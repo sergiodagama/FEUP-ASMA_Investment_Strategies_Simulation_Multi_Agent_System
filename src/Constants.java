@@ -8,7 +8,7 @@ public final class Constants {
     public static final String EXCHANGE_AGENT_NAME = "exchange-agent";
     public static final String MARKET_NO_MORE_DAYS_MSG = "NO_MORE_DAYS";
     public static final String UNSUPPORTED_ORDER_TYPE = "UNSUPPORTED_ORDER";
-    public static final String DATA_FILENAME = "data.json";
+    public static final String DATA_FILENAME = "../data.json";
     public static enum ORDER_TYPES {
         BUY("BUY"),
         SELL("SELL"),

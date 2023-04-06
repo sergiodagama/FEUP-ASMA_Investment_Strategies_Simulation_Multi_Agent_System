@@ -7,10 +7,7 @@ import jade.proto.ContractNetInitiator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class TraderAgent extends Agent {
     protected void setup() {
@@ -32,7 +29,7 @@ public class TraderAgent extends Agent {
 
                 // if no more days message from market -> terminate agent
                 if (msg.getContent().equals(Constants.MARKET_NO_MORE_DAYS_MSG)){
-                    doDelete();
+                    doDelete();  // TODO: check if the agent terminates or just doesn't do anything
                 }
 
                 // convert string to hashmap
@@ -58,7 +55,7 @@ public class TraderAgent extends Agent {
 
                         // Send order message using Contract Net Protocol
                         addBehaviour(new ContractNetInitiator(myAgent, orderMessage) {
-                            protected void handlePropose(ACLMessage propose, java.util.Vector v) {
+                            protected void handlePropose(ACLMessage propose, Vector v) {
                                 // Handle commission offer from Broker agent
                                 System.out.println("Trader Agent " + getAID().getName() + " received commission offer: " + propose.getContent());
                             }
@@ -73,7 +70,7 @@ public class TraderAgent extends Agent {
                                 System.out.println("Trader Agent " + getAID().getName() + " received failure from Broker Agent.");
                             }
 
-                            protected void handleAllResponses(java.util.Vector v) {
+                            protected void handleAllResponses(Vector v) {
                                 // Choose the best commission offer and accept it
                                 ACLMessage bestOffer = null;
                                 double bestCommission = Double.MAX_VALUE;

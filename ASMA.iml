@@ -11,6 +11,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jade" level="project" />
-    <orderEntry type="library" name="jade" level="project" />
+    <orderEntry type="library" exported="" name="jade" level="project" />
+    <orderEntry type="library" exported="" name="json-20230227" level="project" />
   </component>
 </module>

@@ -36,12 +36,12 @@ public class BrokerAgent extends Agent {
                 addBehaviour(new ContractNetResponder(myAgent, MessageTemplate.MatchPerformative(ACLMessage.CFP)) {
                     protected ACLMessage handleCfp(ACLMessage cfp) {
                         // check commissions and types of orders allowed
-                        Double commission = 0.1; // default commission
+                        double commission = 0.02; // default commission
 
                         try {
                             Order order = Order.deserialize(cfp.getContent());
 
-                            Double totalValue = order.getQuantity() * order.getValuePerAsset();
+                            double totalValue = order.getQuantity() * order.getValuePerAsset();
 
                             if (allowedOrders.contains(order.getOrderType())) {
                                 if (totalValue <= 1000){

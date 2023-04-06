@@ -6,6 +6,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.core.AID;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -13,13 +14,45 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 public class MarketAgent extends Agent {
     private List<AID> subscribers;
-    private List<HashMap<String, HashMap<String, Double>>> dailyValues;
+    private List<List<HashMap<String, HashMap<String, Double>>>> dailyValues;
     private int currentDay = 0;
     private AID marketAgentAID;
     private void loadDailyValues(){
-        // TODO: load values from file and fill the list of hash maps
+        // load values from json file and fills the list with hash maps
+        dailyValues = new ArrayList<>();
+        JSONParser parser = new JSONParser();
+        try {
+            JSONArray outerArray = (JSONArray) parser.parse(new FileReader(Constants.DATA_FILENAME));
+            for (Object innerListObj : outerArray) {
+                List<HashMap<String, HashMap<String, Double>>> innerList = new ArrayList<>();
+                JSONArray innerArray = (JSONArray) innerListObj;
+                for (Object innerObj : innerArray) {
+                    JSONObject innerJson = (JSONObject) innerObj;
+                    HashMap<String, HashMap<String, Double>> innerMap = new HashMap<>();
+                    String ticker = (String) innerJson.get("ticker");
+                    Double high = (Double) innerJson.get("high");
+                    Double low = (Double) innerJson.get("low");
+                    Double close = (Double) innerJson.get("close");
+                    Double volume = (Double) innerJson.get("volume");
+                    HashMap<String, Double> innerMap2 = new HashMap<>();
+                    innerMap2.put("high", high);
+                    innerMap2.put("low", low);
+                    innerMap2.put("close", close);
+                    innerMap2.put("volume", volume);
+                    innerMap.put(ticker, innerMap2);
+                    innerList.add(innerMap);
+                }
+                dailyValues.add(innerList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -46,12 +79,15 @@ public class MarketAgent extends Agent {
         marketAgentAID = new AID(Constants.MARKET_AGENT_NAME, AID.ISLOCALNAME);
     }
 
-    public String hashMapToString(HashMap<String, HashMap<String, Double>> hashMap) throws IOException {
+    private String listOfHashMapToString(List<HashMap<String, HashMap<String, Double>>> list) throws IOException {
+        // Convert the list to a byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(hashMap);
-        oos.flush();
-        return Base64.getEncoder().encodeToString(baos.toByteArray());
+        oos.writeObject(list);
+        byte[] bytes = baos.toByteArray();
+
+        // Encode the byte array into a string
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
     @Override
@@ -90,7 +126,7 @@ public class MarketAgent extends Agent {
         // Create a message with the latest prices
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         msg.addReceiver(trader);
-        msg.setContent(hashMapToString(dailyValues.get(currentDay)));
+        msg.setContent(listOfHashMapToString(dailyValues.get(currentDay)));
         send(msg);
 
         // advance to next day

@@ -36,9 +36,9 @@ public class TraderAgent extends Agent {
                 }
 
                 // convert string to hashmap
-                HashMap<String, HashMap<String, Double>> dailyInfo = null;
+                List<HashMap<String, HashMap<String, Double>>> dailyInfo = null;
                 try {
-                    dailyInfo = stringToHashMap(msg.getContent());
+                    dailyInfo = stringToListHashMaps(msg.getContent());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -106,13 +106,15 @@ public class TraderAgent extends Agent {
             }
         }
 
-        private HashMap<String, HashMap<String, Double>> stringToHashMap(String str) throws IOException, ClassNotFoundException {
-            byte[] data = Base64.getDecoder().decode(str);
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-            return (HashMap<String, HashMap<String, Double>>)ois.readObject();
+        private List<HashMap<String, HashMap<String, Double>>> stringToListHashMaps(String encoded) throws IOException, ClassNotFoundException {
+            // Decode the string back into the object
+            byte[] decodedBytes = Base64.getDecoder().decode(encoded);
+            ByteArrayInputStream bais = new ByteArrayInputStream(decodedBytes);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (List<HashMap<String, HashMap<String, Double>>>) ois.readObject();
         }
 
-        private List<Order> executeStrategy(HashMap<String, HashMap<String, Double>> dailyInfo) {
+        private List<Order> executeStrategy(List<HashMap<String, HashMap<String, Double>>> dailyInfo) {
             List<Order> result = new ArrayList<>();
 
             // TODO: add actual strategy implementation

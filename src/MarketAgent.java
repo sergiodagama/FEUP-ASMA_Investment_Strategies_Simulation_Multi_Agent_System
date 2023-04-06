@@ -5,8 +5,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.core.AID;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,6 +46,14 @@ public class MarketAgent extends Agent {
         marketAgentAID = new AID(Constants.MARKET_AGENT_NAME, AID.ISLOCALNAME);
     }
 
+    public String hashMapToString(HashMap<String, HashMap<String, Double>> hashMap) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(hashMap);
+        oos.flush();
+        return Base64.getEncoder().encodeToString(baos.toByteArray());
+    }
+
     @Override
     protected void takeDown() {
         // Clean up resources
@@ -58,6 +69,7 @@ public class MarketAgent extends Agent {
             if (msg != null) {
                 // Add trader to subscribers list
                 subscribers.add(msg.getSender());
+                System.out.println("Trader with AID " + msg.getSender() + " subscribed to market.");
             } else {
                 block();
             }
@@ -67,9 +79,10 @@ public class MarketAgent extends Agent {
     private void sendPricesToTrader(AID trader) throws IOException {
         // if the market has reached the final day
         if (currentDay == dailyValues.size()){
+            System.out.println("Market reached end of days.");
             ACLMessage msg = new ACLMessage(ACLMessage.FAILURE);
             msg.addReceiver(trader);
-            msg.setContentObject("NO_MORE_DAYS"); // TODO: pass this message to constants?
+            msg.setContentObject(Constants.MARKET_NO_MORE_DAYS_MSG);
             send(msg);
             return;
         }
@@ -77,7 +90,7 @@ public class MarketAgent extends Agent {
         // Create a message with the latest prices
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         msg.addReceiver(trader);
-        msg.setContent(dailyValues.get(currentDay).toString());
+        msg.setContent(hashMapToString(dailyValues.get(currentDay)));
         send(msg);
 
         // advance to next day

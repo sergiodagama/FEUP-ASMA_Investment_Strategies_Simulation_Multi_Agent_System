@@ -149,12 +149,6 @@ public class MarketAgent extends Agent {
         currentDay++;
     }
 
-    public void printDailyInfo(List<HashMap<String, HashMap<String, Double>>> list){
-        for (HashMap<String, HashMap<String, Double>> map : list) {
-            System.out.println(map.toString());
-        }
-    }
-
     public void onTick() throws IOException {
         // notify subscribers
         notifySubscribers();

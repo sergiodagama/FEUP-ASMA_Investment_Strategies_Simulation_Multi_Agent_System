@@ -116,6 +116,9 @@ public class TraderAgent extends Agent {
 
             // TODO: add actual strategy implementation
 
+            // THE FOLLOWING line IS JUST FOR TESTING
+            result.add(new Order(Constants.ORDER_TYPES.BUY, 15, 100, "IF"));
+
             return result;
         }
     }

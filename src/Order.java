@@ -2,12 +2,12 @@ import java.io.*;
 import java.util.Base64;
 
 public class Order implements Serializable {
-    private String orderType;
+    private Constants.ORDER_TYPES orderType;
     private double valuePerAsset;
     private int quantity;
     private String assetID;
 
-    public Order(String orderType, double valuePerAsset, int quantity, String assetID) {
+    public Order(Constants.ORDER_TYPES orderType, double valuePerAsset, int quantity, String assetID) {
         this.orderType = orderType;
         this.valuePerAsset = valuePerAsset;
         this.quantity = quantity;
@@ -28,11 +28,11 @@ public class Order implements Serializable {
         return (Order) ois.readObject();
     }
 
-    public String getOrderType() {
+    public Constants.ORDER_TYPES getOrderType() {
         return orderType;
     }
 
-    public void setOrderType(String orderType) {
+    public void setOrderType(Constants.ORDER_TYPES orderType) {
         this.orderType = orderType;
     }
 

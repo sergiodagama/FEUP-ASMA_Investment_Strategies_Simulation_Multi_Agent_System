@@ -45,7 +45,7 @@ public class TraderAgent extends Agent {
 
                 for(String brokerAgent : Constants.BROKER_AGENT_NAMES) {
                     for(Order order : strategyResults) {
-                        ACLMessage orderMessage = new ACLMessage(ACLMessage.PROPOSE);
+                        ACLMessage orderMessage = new ACLMessage(ACLMessage.CFP);
                         orderMessage.addReceiver(new AID(brokerAgent, AID.ISLOCALNAME));
                         try {
                             orderMessage.setContent(order.serialize());
@@ -89,6 +89,7 @@ public class TraderAgent extends Agent {
                                     accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                                     send(accept);
                                 }
+                                System.out.println("In all responses!!");
                             }
 
                             protected void handleInform(ACLMessage inform) {

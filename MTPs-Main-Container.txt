@@ -1,1 +1,1 @@
-http://LAPTOP-3734FA3T.mshome.net:7778/acc
+http://LAPTOP-3734FA3T:7778/acc

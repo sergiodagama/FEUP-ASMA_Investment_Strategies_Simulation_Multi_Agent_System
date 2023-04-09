@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3017dcea-2297-4fac-8329-a36a34a99b92" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/APDescription.txt" beforeDir="false" afterPath="$PROJECT_DIR$/APDescription.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MTPs-Main-Container.txt" beforeDir="false" afterPath="$PROJECT_DIR$/MTPs-Main-Container.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent$HandleOrderBehaviour$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent$HandleOrderBehaviour$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent$HandleOrderBehaviour.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent$HandleOrderBehaviour.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/Constants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/TraderAgent$ExecuteStrategyBehaviour.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/TraderAgent$ExecuteStrategyBehaviour.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BrokerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BrokerAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MarketAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MarketAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Constants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TraderAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TraderAgent.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -66,7 +71,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.kotlinCompiler&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
   <component name="RecentsManager">

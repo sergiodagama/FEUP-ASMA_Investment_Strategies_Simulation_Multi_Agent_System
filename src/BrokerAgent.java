@@ -2,11 +2,9 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class BrokerAgent extends Agent {
@@ -27,12 +25,10 @@ public class BrokerAgent extends Agent {
         public void action() {
             // Receive order messages from Trader agents
             ACLMessage msg = receive();
-            if (msg != null && msg.getPerformative() == ACLMessage.PROPOSE) {
+            if (msg != null) {
 
-                System.out.println("here");
                 // Handle order using Contract Net Protocol
-
-                addBehaviour(new ContractNetResponder(myAgent, MessageTemplate.MatchAll()) {
+                addBehaviour(new ContractNetResponder(myAgent, null) {
                     protected ACLMessage handleCfp(ACLMessage cfp) {
                         // check commissions and types of orders allowed
                         double commission = 0.02; // default commission

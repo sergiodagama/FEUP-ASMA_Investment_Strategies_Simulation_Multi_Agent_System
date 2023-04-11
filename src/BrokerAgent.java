@@ -1,10 +1,8 @@
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.proto.ContractNetResponder;
 import jade.proto.SSContractNetResponder;
 import jade.proto.SSResponderDispatcher;
 
@@ -17,8 +15,8 @@ public class BrokerAgent extends Agent {
 
     protected void setup() {
         System.out.println("[BROKER] Broker Agent " + getAID().getName() + " is ready.");
-//        addBehaviour(new HandleOrderBehaviour());
         addBehaviour(new HandleOrderDispatcher(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
+
         // initialize the list of allowed orders
         allowedOrders.add(Constants.ORDER_TYPES.SELL);
         allowedOrders.add(Constants.ORDER_TYPES.BUY);
@@ -35,7 +33,7 @@ public class BrokerAgent extends Agent {
 
         @Override
         protected Behaviour createResponder(ACLMessage initiationMsg) {
-            System.out.println("[BROKER] Received CFP from in dispatcher" + initiationMsg.getSender().getName());
+            System.out.println("[BROKER] Received CFP from " + initiationMsg.getSender().getName());
             return new HandleOrderBehaviour(myAgent, initiationMsg);
         }
 
@@ -43,18 +41,15 @@ public class BrokerAgent extends Agent {
 
             public HandleOrderBehaviour(Agent a, ACLMessage cfp) {
                 super(a, cfp);
-                System.out.println("[BROKER] HandleOrderBehaviour created");
             }
 
             @Override
             protected ACLMessage handleCfp(ACLMessage cfp) {
-                System.out.println("[BROKER] Received CFP from " + cfp.getSender().getName());
                 // check commissions and types of orders allowed
                 double commission = 0.02; // default commission
-/*
+
                 try {
                     Order order = Order.deserialize(cfp.getContent());
-
                     double totalValue = order.getQuantity() * order.getValuePerAsset();
 
                     if (allowedOrders.contains(order.getOrderType())) {
@@ -66,7 +61,7 @@ public class BrokerAgent extends Agent {
                             commission = 0.01;
                         }
                     } else {
-                        // Send a refuse message
+                        // send a refuse message
                         ACLMessage refuse = cfp.createReply();
                         refuse.setPerformative(ACLMessage.REFUSE);
                         refuse.setContent(Constants.UNSUPPORTED_ORDER_TYPE);
@@ -76,9 +71,9 @@ public class BrokerAgent extends Agent {
 
                 } catch (Exception e) {
                     throw new RuntimeException(e);
-                }*/
+                }
 
-                // Respond with best commission offer
+                // respond with best commission offer
                 ACLMessage propose = cfp.createReply();
                 propose.setPerformative(ACLMessage.PROPOSE);
                 propose.setContent(Double.toString(commission));
@@ -88,21 +83,19 @@ public class BrokerAgent extends Agent {
 
             @Override
             protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
-                System.out.println("IN ACCEPT PROPOSAL");
-                // Send order to Exchange agent
+                System.out.println("[BROKER] Received ACCEPT-PROPOSAL from trader.");
+
+                // send order to Exchange agent
                 ACLMessage orderMessage = new ACLMessage(ACLMessage.REQUEST);
                 orderMessage.addReceiver(new AID(Constants.EXCHANGE_AGENT_NAME, AID.ISLOCALNAME));
                 orderMessage.setContent(cfp.getContent());
                 send(orderMessage);
 
-                // Send confirmation message to Trader agent
+                // send confirmation message to Trader agent
                 ACLMessage inform = accept.createReply();
                 inform.setPerformative(ACLMessage.INFORM);
                 return inform;
             }
         }
-
     }
-
-
 }

@@ -65,14 +65,14 @@ public class MarketAgent extends Agent {
     protected void setup() {
         subscribers = new ArrayList<>();
 
-        // Add behavior to handle subscription requests
+        // add behavior to handle subscription requests
         addBehaviour(new SubscriptionRequestsBehavior());
 
-        // Initialize prices map with some initial values
+        // initialize prices map
         loadDailyValues();
         System.out.println("[MARKET] Finish loading data from file");
 
-        // Add behavior to update prices to subscribers every 10 seconds
+        // add behavior to update prices to subscribers every 10 seconds
         addBehaviour(new TickerBehaviour(this, Constants.MARKET_DAILY_PERIOD) {
             @Override
             protected void onTick() {
@@ -90,19 +90,19 @@ public class MarketAgent extends Agent {
     }
 
     private String listOfHashMapToString(List<HashMap<String, HashMap<String, Double>>> list) throws IOException {
-        // Convert the list to a byte array
+        // convert the list to a byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(list);
         byte[] bytes = baos.toByteArray();
 
-        // Encode the byte array into a string
+        // encode the byte array into a string
         return Base64.getEncoder().encodeToString(bytes);
     }
 
     @Override
     protected void takeDown() {
-        // Clean up resources
+        // clean up resources
         subscribers.clear();
         dailyValues.clear();
     }
@@ -110,10 +110,10 @@ public class MarketAgent extends Agent {
     private class SubscriptionRequestsBehavior extends CyclicBehaviour {
         @Override
         public void action() {
-            // Wait for subscription requests from traders
+            // wait for subscription requests from traders
             ACLMessage msg = receive(MessageTemplate.MatchPerformative(ACLMessage.SUBSCRIBE));
             if (msg != null) {
-                // Add trader to subscribers list
+                // add trader to subscribers list
                 subscribers.add(msg.getSender());
                 System.out.println("[MARKET] Trader with AID " + msg.getSender() + " subscribed to market.");
             } else {
@@ -134,22 +134,22 @@ public class MarketAgent extends Agent {
             return;
         }
 
-        // Create a message with the latest prices
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        // create a message with the latest prices
+        ACLMessage msg = new ACLMessage(ACLMessage.PROPAGATE);
         msg.addReceiver(trader);
         msg.setContent(listOfHashMapToString(dailyValues.get(currentDay)));
         send(msg);
     }
 
     private void notifySubscribers() throws IOException {
-        // Send the latest prices to all subscribers
+        // send the latest prices to all subscribers
         for (AID subscriber : subscribers) {
             sendPricesToTrader(subscriber);
         }
 
         // advance to next day, only when there are subscribers
         if (subscribers.size() > 0) {
-            currentDay = (currentDay + 1) % dailyValues.size();
+            currentDay++;
         }
 
     }

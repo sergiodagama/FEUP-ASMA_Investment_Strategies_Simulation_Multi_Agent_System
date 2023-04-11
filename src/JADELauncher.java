@@ -6,13 +6,10 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
-import java.util.Scanner;
-
 public class JADELauncher {
 
     public static void main(String[] args) {
         initJade();
-
     }
 
     public static void initJade() {
@@ -23,16 +20,15 @@ public class JADELauncher {
 
         AgentController ac1;
         try {
-            ac1 = mainContainer.acceptNewAgent("market-agent", new MarketAgent());
+            ac1 = mainContainer.acceptNewAgent(Constants.MARKET_AGENT_NAME, new MarketAgent());
             ac1.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
 
-        Object[] agentArgs = new Object[0];
         AgentController ac2;
         try {
-            ac2 = mainContainer.acceptNewAgent("broker-agent", new BrokerAgent());
+            ac2 = mainContainer.acceptNewAgent(Constants.BROKER_AGENT_NAMES.get(0), new BrokerAgent());
             ac2.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
@@ -40,15 +36,16 @@ public class JADELauncher {
 
         AgentController ac3;
         try {
-            ac3 = mainContainer.acceptNewAgent("broker-agent-2", new BrokerAgent());
+            ac3 = mainContainer.acceptNewAgent(Constants.BROKER_AGENT_NAMES.get(1), new BrokerAgent());
             ac3.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
 
         AgentController ac4;
+        Object[] agentArgs = new Object[0];
         try {
-            ac4 = mainContainer.acceptNewAgent("trader", new TraderAgent());
+            ac4 = mainContainer.createNewAgent("trader", "TraderAgent", agentArgs);
             ac4.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
@@ -62,5 +59,4 @@ public class JADELauncher {
             e.printStackTrace();
         }
     }
-
 }

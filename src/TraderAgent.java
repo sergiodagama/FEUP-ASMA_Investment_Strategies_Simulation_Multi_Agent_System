@@ -1,7 +1,7 @@
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
+
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetInitiator;
@@ -16,13 +16,12 @@ public class TraderAgent extends Agent {
     protected void setup() {
         System.out.println("[TRADER] Trader Agent " + getAID().getName() + " is ready.");
 
-        // Subscribe to Market agent
+        // subscribe to Market agent
         ACLMessage subscription = new ACLMessage(ACLMessage.SUBSCRIBE);
         subscription.addReceiver(new AID(Constants.MARKET_AGENT_NAME, AID.ISLOCALNAME));
         send(subscription);
 
-        addBehaviour(new ExecuteStrategyDispatcher(this, MessageTemplate.MatchPerformative(ACLMessage.INFORM)));
-//        addBehaviour(new ExecuteStrategyBehaviour());
+        addBehaviour(new ExecuteStrategyDispatcher(this, MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE)));
     }
 
     private class ExecuteStrategyDispatcher extends SSResponderDispatcher {
@@ -35,7 +34,7 @@ public class TraderAgent extends Agent {
             return new ExecuteStrategyBehaviour(initiationMsg);
         }
 
-
+        // receive daily info from Market agent
         private class ExecuteStrategyBehaviour extends Behaviour {
             private boolean isDone = false;
             private ACLMessage msg;
@@ -46,8 +45,6 @@ public class TraderAgent extends Agent {
             }
 
             public void action() {
-                // Receive daily info from Market agent
-
                 // if no more days message from market -> terminate agent
                 if (msg.getContent().equals(Constants.MARKET_NO_MORE_DAYS_MSG)) {
                     doDelete();
@@ -61,15 +58,12 @@ public class TraderAgent extends Agent {
                     throw new RuntimeException(e);
                 }
 
-
-                // Execute strategy and create order message
+                // execute strategy and create order message
                 List<Order> strategyResults = executeStrategy(dailyInfo);
 
                 for (Order order : strategyResults) {
-                    // Send order message using Contract Net Protocol
-                    addBehaviour(new MyNetInitiator(this.getAgent(), new ACLMessage(ACLMessage.CFP), order) {
-
-                    });
+                    // send order message using Contract Net Protocol
+                    addBehaviour(new MyNetInitiator(this.getAgent(), new ACLMessage(ACLMessage.CFP), order) {} );
                 }
                 isDone = true;
             }
@@ -94,13 +88,11 @@ public class TraderAgent extends Agent {
                     for (String brokerAgent : Constants.BROKER_AGENT_NAMES) {
                         cfp.addReceiver(new AID(brokerAgent, AID.ISLOCALNAME));
                     }
-                    cfp.setContent("test");
-                /*try {
+                try {
                     cfp.setContent(order.serialize());
-                    cfp.setContent("test");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
-                }*/
+                }
 
                     v.add(cfp);
                     return v;
@@ -108,19 +100,19 @@ public class TraderAgent extends Agent {
 
                 @Override
                 protected void handlePropose(ACLMessage propose, Vector v) {
-                    // Handle commission offer from Broker agent
+                    // handle commission offer from Broker agent
                     System.out.println("Trader Agent " + getAID().getName() + " received commission offer: " + propose.getContent() + " from " + propose.getSender());
                 }
 
                 @Override
                 protected void handleRefuse(ACLMessage refuse) {
-                    // Handle refusal from Broker agent
+                    // handle refusal from Broker agent
                     System.out.println("Trader Agent " + getAID().getName() + " received refusal from Broker Agent.");
                 }
 
                 @Override
                 protected void handleFailure(ACLMessage failure) {
-                    // Handle failure from Broker agent
+                    // handle failure from Broker agent
                     System.out.println("Trader Agent " + getAID().getName() + " received failure from Broker Agent.");
                 }
 
@@ -128,7 +120,7 @@ public class TraderAgent extends Agent {
                 protected void handleAllResponses(Vector v, Vector a) {
                     System.out.println("In all responses!!");
 
-                    // Choose the best commission offer and accept it
+                    // choose the best commission offer and accept it
                     ACLMessage bestOffer = null;
                     double bestCommission = Double.MAX_VALUE;
                     for (Object obj : v) {
@@ -145,19 +137,18 @@ public class TraderAgent extends Agent {
                         ACLMessage accept = bestOffer.createReply();
                         accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                         send(accept);
-                        System.out.println("In ACCEPT PROP!!");
                     }
                 }
 
                 @Override
                 protected void handleInform(ACLMessage inform) {
-                    // Handle confirmation from Broker agent
+                    // handle confirmation from Broker agent
                     System.out.println("Trader Agent " + getAID().getName() + " received confirmation from Broker Agent.");
                 }
             }
 
             private List<HashMap<String, HashMap<String, Double>>> stringToListHashMaps(String encoded) throws IOException, ClassNotFoundException {
-                // Decode the string back into the object
+                // decode the string back into the object
                 byte[] decodedBytes = Base64.getDecoder().decode(encoded);
                 ByteArrayInputStream bais = new ByteArrayInputStream(decodedBytes);
                 ObjectInputStream ois = new ObjectInputStream(bais);

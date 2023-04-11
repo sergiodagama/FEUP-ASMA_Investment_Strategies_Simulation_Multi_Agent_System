@@ -1,9 +1,12 @@
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
+import jade.proto.SSContractNetResponder;
+import jade.proto.SSResponderDispatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,23 +17,38 @@ public class BrokerAgent extends Agent {
 
     protected void setup() {
         System.out.println("[BROKER] Broker Agent " + getAID().getName() + " is ready.");
-        addBehaviour(new HandleOrderBehaviour());
-
+//        addBehaviour(new HandleOrderBehaviour());
+        addBehaviour(new HandleOrderDispatcher(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
         // initialize the list of allowed orders
         allowedOrders.add(Constants.ORDER_TYPES.SELL);
         allowedOrders.add(Constants.ORDER_TYPES.BUY);
         allowedOrders.add(Constants.ORDER_TYPES.SHORT);
     }
 
-    private class HandleOrderBehaviour extends CyclicBehaviour {
-        class MyContractNetResponder extends ContractNetResponder{
+    private class HandleOrderDispatcher extends SSResponderDispatcher {
+        private MessageTemplate mt;
 
-            public MyContractNetResponder(Agent a, MessageTemplate mt) {
-                super(a, mt);
+        public HandleOrderDispatcher(Agent a, MessageTemplate mt) {
+            super(a, mt);
+            this.mt = mt;
+        }
+
+        @Override
+        protected Behaviour createResponder(ACLMessage initiationMsg) {
+            System.out.println("[BROKER] Received CFP from in dispatcher" + initiationMsg.getSender().getName());
+            return new HandleOrderBehaviour(myAgent, initiationMsg);
+        }
+
+        class HandleOrderBehaviour extends SSContractNetResponder {
+
+            public HandleOrderBehaviour(Agent a, ACLMessage cfp) {
+                super(a, cfp);
+                System.out.println("[BROKER] HandleOrderBehaviour created");
             }
 
             @Override
             protected ACLMessage handleCfp(ACLMessage cfp) {
+                System.out.println("[BROKER] Received CFP from " + cfp.getSender().getName());
                 // check commissions and types of orders allowed
                 double commission = 0.02; // default commission
 /*
@@ -64,6 +82,7 @@ public class BrokerAgent extends Agent {
                 ACLMessage propose = cfp.createReply();
                 propose.setPerformative(ACLMessage.PROPOSE);
                 propose.setContent(Double.toString(commission));
+                System.out.println("[BROKER] Sending PROPOSE with commission " + commission);
                 return propose;
             }
 
@@ -83,15 +102,7 @@ public class BrokerAgent extends Agent {
             }
         }
 
-        public void action() {
-            // Receive order messages from Trader agents
-            ACLMessage msg = receive();
-            if (msg != null) {
-                // Handle order using Contract Net Protocol
-                addBehaviour(new MyContractNetResponder(myAgent, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
-            } else {
-                block();
-            }
-        }
     }
+
+
 }

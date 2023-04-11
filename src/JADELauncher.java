@@ -6,9 +6,16 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
+import java.util.Scanner;
+
 public class JADELauncher {
 
     public static void main(String[] args) {
+        initJade();
+
+    }
+
+    public static void initJade() {
         Runtime rt = Runtime.instance();
 
         Profile p1 = new ProfileImpl();
@@ -43,6 +50,14 @@ public class JADELauncher {
         try {
             ac4 = mainContainer.acceptNewAgent("trader", new TraderAgent());
             ac4.start();
+        } catch (StaleProxyException e) {
+            e.printStackTrace();
+        }
+        AgentController ac5;
+        try {
+            Agent rma = new jade.tools.rma.rma();
+            ac5 = mainContainer.acceptNewAgent("myRMA", rma);
+            ac5.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }

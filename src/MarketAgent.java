@@ -16,7 +16,8 @@ public class MarketAgent extends Agent {
     private List<List<HashMap<String, HashMap<String, Double>>>> dailyValues;
     private int currentDay = 0;
     private Boolean stopSubscriptionUpdate = false;
-    private void loadDailyValues(){
+
+    private void loadDailyValues() {
         // load values from json file and fills the list with hash maps
         dailyValues = new ArrayList<>();
 
@@ -29,6 +30,7 @@ public class MarketAgent extends Agent {
             scanner.close();
 
             JSONArray outerArray = (JSONArray) new JSONTokener(jsonString).nextValue();
+            int i = 0;
 
             for (Object innerListObj : outerArray) {
                 List<HashMap<String, HashMap<String, Double>>> innerList = new ArrayList<>();
@@ -48,8 +50,11 @@ public class MarketAgent extends Agent {
                     innerMap2.put("volume", volume);
                     innerMap.put(ticker, innerMap2);
                     innerList.add(innerMap);
+
                 }
                 dailyValues.add(innerList);
+                i++;
+                if (i == 10) break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,7 +124,7 @@ public class MarketAgent extends Agent {
 
     private void sendPricesToTrader(AID trader) throws IOException {
         // if the market has reached the final day
-        if (currentDay == dailyValues.size()){
+        if (currentDay == dailyValues.size()) {
             System.out.println("[MARKET] Market reached end of days.");
             ACLMessage msg = new ACLMessage(ACLMessage.FAILURE);
             msg.addReceiver(trader);
@@ -143,9 +148,10 @@ public class MarketAgent extends Agent {
         }
 
         // advance to next day, only when there are subscribers
-        if (subscribers.size() > 0){
-            currentDay++;
+        if (subscribers.size() > 0) {
+            currentDay = (currentDay + 1) % dailyValues.size();
         }
+
     }
 
     public void onTick() throws IOException {

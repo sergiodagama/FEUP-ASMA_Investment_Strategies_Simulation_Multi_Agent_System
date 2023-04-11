@@ -88,7 +88,7 @@ public class BrokerAgent extends Agent {
             ACLMessage msg = receive();
             if (msg != null) {
                 // Handle order using Contract Net Protocol
-                addBehaviour(new MyContractNetResponder(myAgent, null));
+                addBehaviour(new MyContractNetResponder(myAgent, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
             } else {
                 block();
             }

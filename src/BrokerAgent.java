@@ -3,10 +3,12 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.proto.AchieveREInitiator;
 import jade.proto.ContractNetResponder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class BrokerAgent extends Agent {
     // TODO: check that only the commissions if, the allowed array and the AID are going to be different
@@ -83,12 +85,51 @@ public class BrokerAgent extends Agent {
             }
         }
 
+        class MyRequestInitiator extends AchieveREInitiator {
+
+			public MyRequestInitiator(Agent a, ACLMessage msg) {
+				super(a, msg);
+			}
+			
+			protected Vector<ACLMessage> prepareRequests(ACLMessage request) {
+				Vector<ACLMessage> v = new Vector<ACLMessage>();
+				v.add(request);
+				return v;
+			}
+			
+			protected void handleAgree(ACLMessage agree) {
+				System.out.println("Broker agent handling agree message: " + agree.getContent());
+			}
+			
+			protected void handleRefuse(ACLMessage refuse) {
+				System.out.println("Broker agent handling refuse message: " + refuse.getContent());
+			}
+			
+			protected void handleFailure(ACLMessage failure) {
+				System.out.println("Broker agent handling failure message: " + failure.getContent());
+			}
+			
+			protected void handleInform(ACLMessage inform) {
+				System.out.println("Broker agent handling inform message: " + inform.getContent());
+			}
+			
+			protected void handleAllResponses(Vector responses) {
+				System.out.println("Broker agent handling all responses");
+			}
+			
+			protected void handleAllResultNotifications(Vector notifications) {
+				System.out.println("Broker agent handling all notifications");
+			}
+			
+        	
+        }
         public void action() {
             // Receive order messages from Trader agents
             ACLMessage msg = receive();
             if (msg != null) {
                 // Handle order using Contract Net Protocol
                 addBehaviour(new MyContractNetResponder(myAgent, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
+                addBehaviour(new MyRequestInitiator(myAgent, null));
             } else {
                 block();
             }

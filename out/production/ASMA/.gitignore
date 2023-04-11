@@ -2,3 +2,4 @@
 /TraderAgent$ExecuteStrategyBehaviour$1.class
 /StockExchangeAgent$StockBehaviour$MyRequestResponder.class
 /StockExchangeAgent$StockBehaviour.class
+/BrokerAgent$HandleOrderBehaviour$MyRequestInitiator.class

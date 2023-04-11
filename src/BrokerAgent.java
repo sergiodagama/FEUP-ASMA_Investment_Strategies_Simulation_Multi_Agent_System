@@ -2,6 +2,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 
 import java.util.ArrayList;
@@ -22,64 +23,72 @@ public class BrokerAgent extends Agent {
     }
 
     private class HandleOrderBehaviour extends CyclicBehaviour {
+        class MyContractNetResponder extends ContractNetResponder{
+
+            public MyContractNetResponder(Agent a, MessageTemplate mt) {
+                super(a, mt);
+            }
+
+            @Override
+            protected ACLMessage handleCfp(ACLMessage cfp) {
+                // check commissions and types of orders allowed
+                double commission = 0.02; // default commission
+/*
+                try {
+                    Order order = Order.deserialize(cfp.getContent());
+
+                    double totalValue = order.getQuantity() * order.getValuePerAsset();
+
+                    if (allowedOrders.contains(order.getOrderType())) {
+                        if (totalValue <= 1000){
+                            commission = 0.1;
+                        } else if (totalValue > 1000 && totalValue < 10000){
+                            commission = 0.05;
+                        } else if (totalValue >= 10000) {
+                            commission = 0.01;
+                        }
+                    } else {
+                        // Send a refuse message
+                        ACLMessage refuse = cfp.createReply();
+                        refuse.setPerformative(ACLMessage.REFUSE);
+                        refuse.setContent(Constants.UNSUPPORTED_ORDER_TYPE);
+                        myAgent.send(refuse);
+                        return null;
+                    }
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }*/
+
+                // Respond with best commission offer
+                ACLMessage propose = cfp.createReply();
+                propose.setPerformative(ACLMessage.PROPOSE);
+                propose.setContent(Double.toString(commission));
+                return propose;
+            }
+
+            @Override
+            protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
+                System.out.println("IN ACCEPT PROPOSAL");
+                // Send order to Exchange agent
+                ACLMessage orderMessage = new ACLMessage(ACLMessage.REQUEST);
+                orderMessage.addReceiver(new AID(Constants.EXCHANGE_AGENT_NAME, AID.ISLOCALNAME));
+                orderMessage.setContent(cfp.getContent());
+                send(orderMessage);
+
+                // Send confirmation message to Trader agent
+                ACLMessage inform = accept.createReply();
+                inform.setPerformative(ACLMessage.INFORM);
+                return inform;
+            }
+        }
+
         public void action() {
             // Receive order messages from Trader agents
             ACLMessage msg = receive();
             if (msg != null) {
-
                 // Handle order using Contract Net Protocol
-                addBehaviour(new ContractNetResponder(myAgent, null) {
-                    protected ACLMessage handleCfp(ACLMessage cfp) {
-                        // check commissions and types of orders allowed
-                        double commission = 0.02; // default commission
-
-                        try {
-                            Order order = Order.deserialize(cfp.getContent());
-
-                            double totalValue = order.getQuantity() * order.getValuePerAsset();
-
-                            if (allowedOrders.contains(order.getOrderType())) {
-                                if (totalValue <= 1000){
-                                    commission = 0.1;
-                                } else if (totalValue > 1000 && totalValue < 10000){
-                                    commission = 0.05;
-                                } else if (totalValue >= 10000) {
-                                    commission = 0.01;
-                                }
-                            } else {
-                                // Send a refuse message
-                                ACLMessage refuse = cfp.createReply();
-                                refuse.setPerformative(ACLMessage.REFUSE);
-                                refuse.setContent(Constants.UNSUPPORTED_ORDER_TYPE);
-                                myAgent.send(refuse);
-                                return null;
-                            }
-
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-
-                        // Respond with best commission offer
-                        ACLMessage propose = cfp.createReply();
-                        propose.setPerformative(ACLMessage.PROPOSE);
-                        propose.setContent(Double.toString(commission));
-                        return propose;
-                    }
-
-                    protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
-                        System.out.println("IN ACCEPT PROPOSAL");
-                        // Send order to Exchange agent
-                        ACLMessage orderMessage = new ACLMessage(ACLMessage.REQUEST);
-                        orderMessage.addReceiver(new AID(Constants.EXCHANGE_AGENT_NAME, AID.ISLOCALNAME));
-                        orderMessage.setContent(cfp.getContent());
-                        send(orderMessage);
-
-                        // Send confirmation message to Trader agent
-                        ACLMessage inform = accept.createReply();
-                        inform.setPerformative(ACLMessage.INFORM);
-                        return inform;
-                    }
-                });
+                addBehaviour(new MyContractNetResponder(myAgent, null));
             } else {
                 block();
             }

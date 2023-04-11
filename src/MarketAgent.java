@@ -78,7 +78,6 @@ public class MarketAgent extends Agent {
                 }
 
                 if (stopSubscriptionUpdate) {
-                    System.out.println("HERE");
                     this.stop();
                 }
             }
@@ -121,7 +120,7 @@ public class MarketAgent extends Agent {
     private void sendPricesToTrader(AID trader) throws IOException {
         // if the market has reached the final day
         if (currentDay == dailyValues.size()){
-            System.out.println("Market reached end of days.");
+            System.out.println("[MARKET] Market reached end of days.");
             ACLMessage msg = new ACLMessage(ACLMessage.FAILURE);
             msg.addReceiver(trader);
             msg.setContentObject(Constants.MARKET_NO_MORE_DAYS_MSG);

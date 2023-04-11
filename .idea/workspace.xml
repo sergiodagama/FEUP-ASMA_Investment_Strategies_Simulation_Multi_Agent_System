@@ -5,8 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3017dcea-2297-4fac-8329-a36a34a99b92" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/JADELauncher.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent$HandleOrderBehaviour$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent$HandleOrderBehaviour.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent$HandleOrderBehaviour.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/Constants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/MarketAgent$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/MarketAgent$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/MarketAgent$SubscriptionRequestsBehavior.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/MarketAgent$SubscriptionRequestsBehavior.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/MarketAgent.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/MarketAgent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/TraderAgent$ExecuteStrategyBehaviour$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/TraderAgent$ExecuteStrategyBehaviour$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/TraderAgent$ExecuteStrategyBehaviour.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/TraderAgent$ExecuteStrategyBehaviour.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/ASMA/TraderAgent.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/TraderAgent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BrokerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BrokerAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Constants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MarketAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MarketAgent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TraderAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TraderAgent.java" afterDir="false" />
     </list>
@@ -42,6 +54,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$PROJECT_DIR$/../../JADE-all-4.5.0/JADE-bin-4.5.0/jade/lib/jade.jar!/jade/proto/ContractNetResponder.class" root0="SKIP_INSPECTION" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -74,7 +89,7 @@
       <recent name="C:\Users\sergi\OneDrive\Documentos\FEUP\2semester\ASMA\repo\FEUP-ASMA_Investment_Strategies_Simulation_Multi_Agent_System\src\reference_code" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Jade &gt; gui">
+  <component name="RunManager" selected="Application.JADELauncher">
     <configuration name="Boot" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="jade.Boot" />
       <module name="project" />
@@ -85,6 +100,13 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="JADELauncher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="JADELauncher" />
+      <module name="ASMA" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -108,10 +130,12 @@
     <list>
       <item itemvalue="Application.Jade &gt; gui" />
       <item itemvalue="Application.Jade &gt; container" />
+      <item itemvalue="Application.JADELauncher" />
       <item itemvalue="Application.Boot" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.JADELauncher" />
         <item itemvalue="Application.Boot" />
       </list>
     </recent_temporary>
@@ -140,5 +164,21 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/BrokerAgent.java</url>
+          <line>66</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/TraderAgent.java</url>
+          <line>81</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

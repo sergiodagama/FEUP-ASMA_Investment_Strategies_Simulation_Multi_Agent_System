@@ -12,7 +12,7 @@ public class BrokerAgent extends Agent {
     private List<Constants.ORDER_TYPES> allowedOrders = new ArrayList<>();
 
     protected void setup() {
-        System.out.println("Broker Agent " + getAID().getName() + " is ready.");
+        System.out.println("[BROKER] Broker Agent " + getAID().getName() + " is ready.");
         addBehaviour(new HandleOrderBehaviour());
 
         // initialize the list of allowed orders
@@ -67,6 +67,7 @@ public class BrokerAgent extends Agent {
                     }
 
                     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
+                        System.out.println("IN ACCEPT PROPOSAL");
                         // Send order to Exchange agent
                         ACLMessage orderMessage = new ACLMessage(ACLMessage.REQUEST);
                         orderMessage.addReceiver(new AID(Constants.EXCHANGE_AGENT_NAME, AID.ISLOCALNAME));

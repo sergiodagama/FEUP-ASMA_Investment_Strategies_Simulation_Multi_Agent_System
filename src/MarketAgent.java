@@ -22,7 +22,7 @@ public class MarketAgent extends Agent {
 
         try {
             String currentWorkingDir = System.getProperty("user.dir");
-            System.out.println("Current working directory: " + currentWorkingDir);
+            System.out.println("[MARKET] Current working directory: " + currentWorkingDir);
 
             Scanner scanner = new Scanner(new File(Constants.DATA_FILENAME));
             String jsonString = scanner.useDelimiter("\\A").next();
@@ -65,7 +65,7 @@ public class MarketAgent extends Agent {
 
         // Initialize prices map with some initial values
         loadDailyValues();
-        System.out.println("Finish loading data from file");
+        System.out.println("[MARKET] Finish loading data from file");
 
         // Add behavior to update prices to subscribers every 10 seconds
         addBehaviour(new TickerBehaviour(this, Constants.MARKET_DAILY_PERIOD) {
@@ -111,7 +111,7 @@ public class MarketAgent extends Agent {
             if (msg != null) {
                 // Add trader to subscribers list
                 subscribers.add(msg.getSender());
-                System.out.println("Trader with AID " + msg.getSender() + " subscribed to market.");
+                System.out.println("[MARKET] Trader with AID " + msg.getSender() + " subscribed to market.");
             } else {
                 block();
             }
@@ -135,8 +135,6 @@ public class MarketAgent extends Agent {
         msg.addReceiver(trader);
         msg.setContent(listOfHashMapToString(dailyValues.get(currentDay)));
         send(msg);
-
-        // printDailyInfo(dailyValues.get(currentDay));
     }
 
     private void notifySubscribers() throws IOException {
@@ -145,15 +143,17 @@ public class MarketAgent extends Agent {
             sendPricesToTrader(subscriber);
         }
 
-        // advance to next day
-        currentDay++;
+        // advance to next day, only when there are subscribers
+        if (subscribers.size() > 0){
+            currentDay++;
+        }
     }
 
     public void onTick() throws IOException {
         // notify subscribers
         notifySubscribers();
         if (currentDay != dailyValues.size()) {
-            System.out.println("Notifying subscribers | Day " + Integer.toString(currentDay));
+            System.out.println("[MARKET] Notifying subscribers | Day " + Integer.toString(currentDay));
         }
     }
 }

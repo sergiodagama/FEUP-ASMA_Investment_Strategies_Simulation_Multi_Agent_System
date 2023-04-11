@@ -28,7 +28,7 @@ public class TraderAgent extends Agent {
             if (msg != null && msg.getPerformative() == ACLMessage.INFORM) {
 
                 // if no more days message from market -> terminate agent
-                if (msg.getContent().equals(Constants.MARKET_NO_MORE_DAYS_MSG)){
+                if (msg.getContent().equals(Constants.MARKET_NO_MORE_DAYS_MSG)) {
                     doDelete();  // TODO: check if the agent terminates or just doesn't do anything
                 }
 
@@ -43,61 +43,61 @@ public class TraderAgent extends Agent {
                 // Execute strategy and create order message
                 List<Order> strategyResults = executeStrategy(dailyInfo);
 
-                for(String brokerAgent : Constants.BROKER_AGENT_NAMES) {
-                    for(Order order : strategyResults) {
-                        ACLMessage orderMessage = new ACLMessage(ACLMessage.CFP);
+                for (Order order : strategyResults) {
+                    ACLMessage orderMessage = new ACLMessage(ACLMessage.CFP);
+                    for (String brokerAgent : Constants.BROKER_AGENT_NAMES) {
                         orderMessage.addReceiver(new AID(brokerAgent, AID.ISLOCALNAME));
-                        try {
-                            orderMessage.setContent(order.serialize());
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                    }
+                    try {
+                        orderMessage.setContent(order.serialize());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    // Send order message using Contract Net Protocol
+                    addBehaviour(new ContractNetInitiator(myAgent, orderMessage) {
+                        protected void handlePropose(ACLMessage propose, Vector v) {
+                            // Handle commission offer from Broker agent
+                            System.out.println("Trader Agent " + getAID().getName() + " received commission offer: " + propose.getContent());
                         }
 
-                        // Send order message using Contract Net Protocol
-                        addBehaviour(new ContractNetInitiator(myAgent, orderMessage) {
-                            protected void handlePropose(ACLMessage propose, Vector v) {
-                                // Handle commission offer from Broker agent
-                                System.out.println("Trader Agent " + getAID().getName() + " received commission offer: " + propose.getContent());
-                            }
+                        protected void handleRefuse(ACLMessage refuse) {
+                            // Handle refusal from Broker agent
+                            System.out.println("Trader Agent " + getAID().getName() + " received refusal from Broker Agent.");
+                        }
 
-                            protected void handleRefuse(ACLMessage refuse) {
-                                // Handle refusal from Broker agent
-                                System.out.println("Trader Agent " + getAID().getName() + " received refusal from Broker Agent.");
-                            }
+                        protected void handleFailure(ACLMessage failure) {
+                            // Handle failure from Broker agent
+                            System.out.println("Trader Agent " + getAID().getName() + " received failure from Broker Agent.");
+                        }
 
-                            protected void handleFailure(ACLMessage failure) {
-                                // Handle failure from Broker agent
-                                System.out.println("Trader Agent " + getAID().getName() + " received failure from Broker Agent.");
-                            }
-
-                            protected void handleAllResponses(Vector v) {
-                                // Choose the best commission offer and accept it
-                                ACLMessage bestOffer = null;
-                                double bestCommission = Double.MAX_VALUE;
-                                for (Object obj : v) {
-                                    ACLMessage offer = (ACLMessage) obj;
-                                    if (offer.getPerformative() == ACLMessage.PROPOSE) {
-                                        double commission = Double.parseDouble(offer.getContent());
-                                        if (commission < bestCommission) {
-                                            bestOffer = offer;
-                                            bestCommission = commission;
-                                        }
+                        protected void handleAllResponses(Vector v, Vector a) {
+                            // Choose the best commission offer and accept it
+                            ACLMessage bestOffer = null;
+                            double bestCommission = Double.MAX_VALUE;
+                            for (Object obj : v) {
+                                ACLMessage offer = (ACLMessage) obj;
+                                if (offer.getPerformative() == ACLMessage.PROPOSE) {
+                                    double commission = Double.parseDouble(offer.getContent());
+                                    if (commission < bestCommission) {
+                                        bestOffer = offer;
+                                        bestCommission = commission;
                                     }
                                 }
-                                if (bestOffer != null) {
-                                    ACLMessage accept = bestOffer.createReply();
-                                    accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                                    send(accept);
-                                }
-                                System.out.println("In all responses!!");
                             }
+                            if (bestOffer != null) {
+                                ACLMessage accept = bestOffer.createReply();
+                                accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                                send(accept);
+                            }
+                            System.out.println("In all responses!!");
+                        }
 
-                            protected void handleInform(ACLMessage inform) {
-                                // Handle confirmation from Broker agent
-                                System.out.println("Trader Agent " + getAID().getName() + " received confirmation from Broker Agent.");
-                            }
-                        });
-                    }
+                        protected void handleInform(ACLMessage inform) {
+                            // Handle confirmation from Broker agent
+                            System.out.println("Trader Agent " + getAID().getName() + " received confirmation from Broker Agent.");
+                        }
+                    });
                 }
             } else {
                 block();
@@ -124,4 +124,5 @@ public class TraderAgent extends Agent {
         }
     }
 }
+
 

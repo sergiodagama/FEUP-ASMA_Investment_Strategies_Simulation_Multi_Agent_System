@@ -7,11 +7,13 @@ import jade.proto.AchieveREResponder;
 import java.util.HashMap;
 
 public class ExchangeAgent extends Agent {
-    public HashMap<String, Order> history; // only the last trader transactions, to not run out of space
+    public HashMap<String, Order> lastTrade; // only the last trader transactions, to not run out of space
+    public HashMap<String,Integer> history; // number of trades per trader
 
     protected void setup() {
         System.out.println("[EXCHANGE] Exchange Agent " + getAID().getName() + " is ready.");
 
+        lastTrade = new HashMap<>();
         history = new HashMap<>();
         addBehaviour(new StockBehaviour());
     }
@@ -37,7 +39,14 @@ public class ExchangeAgent extends Agent {
                 System.out.println("[EXCHANGE] received an order from  " + request.getSender());
                 try {
                     Order order = Order.deserialize(request.getContent());
-                    history.put(String.valueOf(request.getSender()), order);
+                    lastTrade.put(String.valueOf(request.getSender()), order);
+
+                    // get the current value for the key, or 0 if it doesn't exist
+                    int currentValue = history.getOrDefault(String.valueOf(request.getSender()), 0);
+
+                    int newValue = currentValue + 1;
+                    history.put(String.valueOf(request.getSender()), newValue);
+
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

@@ -148,7 +148,6 @@ public class MarketAgent extends Agent {
         if (subscribers.size() > 0) {
             currentDay++;
         }
-
     }
 
     public void onTick() throws IOException {

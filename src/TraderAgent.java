@@ -29,7 +29,6 @@ public class TraderAgent extends Agent {
         Object[] args = getArguments();
         strategyId = (int) args[0];
         System.out.println("[TRADER] argument " + strategyId);
-
     }
 
     private class ExecuteStrategyDispatcher extends SSResponderDispatcher {

@@ -64,9 +64,9 @@ public class BrokerAgent extends Agent {
                         if (totalValue <= 1000){
                             commission = commissions.get(0);
                         } else if (totalValue > 1000 && totalValue < 10000){
-                            commission = commissions.get(0);;
+                            commission = commissions.get(0);
                         } else if (totalValue >= 10000) {
-                            commission = commissions.get(0);;
+                            commission = commissions.get(0);
                         }
                     } else {
                         // send a refuse message

@@ -5,17 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3017dcea-2297-4fac-8329-a36a34a99b92" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/ExchangeAgent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/presentation.pptx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/BrokerAgent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ASMA/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/Constants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ASMA/MarketAgent$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/MarketAgent$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/ASMA/MarketAgent$SubscriptionRequestsBehavior.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/MarketAgent$SubscriptionRequestsBehavior.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/ASMA/MarketAgent.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/MarketAgent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/ASMA/TraderAgent.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/ASMA/TraderAgent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BrokerAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BrokerAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/JADELauncher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/JADELauncher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ExchangeAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ExchangeAgent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MarketAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MarketAgent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TraderAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TraderAgent.java" afterDir="false" />
     </list>

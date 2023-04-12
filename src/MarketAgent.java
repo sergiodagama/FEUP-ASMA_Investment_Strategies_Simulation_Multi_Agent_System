@@ -30,7 +30,6 @@ public class MarketAgent extends Agent {
             scanner.close();
 
             JSONArray outerArray = (JSONArray) new JSONTokener(jsonString).nextValue();
-            int i = 0;
 
             for (Object innerListObj : outerArray) {
                 List<HashMap<String, HashMap<String, Double>>> innerList = new ArrayList<>();
@@ -53,8 +52,6 @@ public class MarketAgent extends Agent {
 
                 }
                 dailyValues.add(innerList);
-                i++;
-                if (i == 10) break;
             }
         } catch (Exception e) {
             e.printStackTrace();

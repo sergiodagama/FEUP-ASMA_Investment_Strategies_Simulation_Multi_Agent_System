@@ -10,17 +10,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BrokerAgent extends Agent {
-    // TODO: check that only the commissions if, the allowed array and the AID are going to be different
     private List<Constants.ORDER_TYPES> allowedOrders = new ArrayList<>();
+    public List<Double> commissions = new ArrayList<>();
 
     protected void setup() {
         System.out.println("[BROKER] Broker Agent " + getAID().getName() + " is ready.");
         addBehaviour(new HandleOrderDispatcher(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
 
+        // get arguments related to allowed orders
+        Object[] args = getArguments();
+
         // initialize the list of allowed orders
-        allowedOrders.add(Constants.ORDER_TYPES.SELL);
-        allowedOrders.add(Constants.ORDER_TYPES.BUY);
-        allowedOrders.add(Constants.ORDER_TYPES.SHORT);
+        if((Boolean) args[0]) allowedOrders.add(Constants.ORDER_TYPES.SELL);
+        if((Boolean) args[1]) allowedOrders.add(Constants.ORDER_TYPES.BUY);
+        if((Boolean) args[2]) allowedOrders.add(Constants.ORDER_TYPES.SHORT);
+
+        // arguments related to commissions
+        commissions.add((Double) args[3]);
+        commissions.add((Double) args[4]);
+        commissions.add((Double) args[5]);
     }
 
     private class HandleOrderDispatcher extends SSResponderDispatcher {
@@ -54,11 +62,11 @@ public class BrokerAgent extends Agent {
 
                     if (allowedOrders.contains(order.getOrderType())) {
                         if (totalValue <= 1000){
-                            commission = 0.1;
+                            commission = commissions.get(0);
                         } else if (totalValue > 1000 && totalValue < 10000){
-                            commission = 0.05;
+                            commission = commissions.get(0);;
                         } else if (totalValue >= 10000) {
-                            commission = 0.01;
+                            commission = commissions.get(0);;
                         }
                     } else {
                         // send a refuse message

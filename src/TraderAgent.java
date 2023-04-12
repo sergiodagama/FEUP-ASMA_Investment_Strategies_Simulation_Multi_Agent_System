@@ -13,6 +13,8 @@ import java.io.ObjectInputStream;
 import java.util.*;
 
 public class TraderAgent extends Agent {
+    private int strategyId;
+
     protected void setup() {
         System.out.println("[TRADER] Trader Agent " + getAID().getName() + " is ready.");
 
@@ -22,6 +24,12 @@ public class TraderAgent extends Agent {
         send(subscription);
 
         addBehaviour(new ExecuteStrategyDispatcher(this, MessageTemplate.MatchPerformative(ACLMessage.PROPAGATE)));
+
+        // get arguments
+        Object[] args = getArguments();
+        strategyId = (int) args[0];
+        System.out.println("[TRADER] argument " + strategyId);
+
     }
 
     private class ExecuteStrategyDispatcher extends SSResponderDispatcher {
@@ -101,25 +109,23 @@ public class TraderAgent extends Agent {
                 @Override
                 protected void handlePropose(ACLMessage propose, Vector v) {
                     // handle commission offer from Broker agent
-                    System.out.println("Trader Agent " + getAID().getName() + " received commission offer: " + propose.getContent() + " from " + propose.getSender());
+                    System.out.println("[TRADER] " + getAID().getName() + " received commission offer: " + propose.getContent() + " from " + propose.getSender());
                 }
 
                 @Override
                 protected void handleRefuse(ACLMessage refuse) {
                     // handle refusal from Broker agent
-                    System.out.println("Trader Agent " + getAID().getName() + " received refusal from Broker Agent.");
+                    System.out.println("[TRADER] " + getAID().getName() + " received refusal from Broker Agent.");
                 }
 
                 @Override
                 protected void handleFailure(ACLMessage failure) {
                     // handle failure from Broker agent
-                    System.out.println("Trader Agent " + getAID().getName() + " received failure from Broker Agent.");
+                    System.out.println("[TRADER] " + getAID().getName() + " received failure from Broker Agent.");
                 }
 
                 @Override
                 protected void handleAllResponses(Vector v, Vector a) {
-                    System.out.println("In all responses!!");
-
                     // choose the best commission offer and accept it
                     ACLMessage bestOffer = null;
                     double bestCommission = Double.MAX_VALUE;
@@ -143,7 +149,7 @@ public class TraderAgent extends Agent {
                 @Override
                 protected void handleInform(ACLMessage inform) {
                     // handle confirmation from Broker agent
-                    System.out.println("Trader Agent " + getAID().getName() + " received confirmation from Broker Agent.");
+                    System.out.println("[TRADER] " + getAID().getName() + " received confirmation from Broker Agent.");
                 }
             }
 
@@ -158,11 +164,26 @@ public class TraderAgent extends Agent {
             private List<Order> executeStrategy(List<HashMap<String, HashMap<String, Double>>> dailyInfo) {
                 List<Order> result = new ArrayList<>();
 
-                // TODO: add actual strategy implementation
-
-                // THE FOLLOWING line IS JUST FOR TESTING
-                result.add(new Order(Constants.ORDER_TYPES.BUY, 15, 100, "IF"));
-
+                switch (strategyId) {
+                    case 0: // used for testing purposes
+                        System.out.println("[TRADER] Strategy 0");
+                        result.add(new Order(Constants.ORDER_TYPES.BUY, 15, 100, "TEST"));
+                        break;
+                    case 1:
+                        System.out.println("[TRADER] Strategy 1");
+                        // TODO: call strategy 1 function
+                        break;
+                    case 2:
+                        System.out.println("[TRADER] Strategy 2");
+                        // TODO: call strategy 2 function
+                        break;
+                    case 3:
+                        System.out.println("[TRADER] Strategy 3");
+                        // TODO: call strategy 3 function
+                        break;
+                    default:
+                        System.out.println("[TRADER] Unknown strategy.");
+                }
                 return result;
             }
         }

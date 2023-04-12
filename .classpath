@@ -6,7 +6,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/sixto/OneDrive/Documentos/Juli/JADE-all-4.5.0/JADE-bin-4.5.0.zip"/>
-	<classpathentry kind="lib" path="C:/Users/sixto/OneDrive/Documentos/Juli/JADE-all-4.5.0/JADE-bin-4.5.0/jade/lib/jade.jar"/>
+	<classpathentry exported="true" kind="lib" path="jade.jar"/>
+	<classpathentry kind="lib" path="C:/Users/julia/Documents/UPorto/ASMA/Assign1/jar_files/json-20230227.jar"/>
+	<classpathentry kind="lib" path="C:/Users/julia/Documents/UPorto/ASMA/JADE-all-4.5.0/JADE-bin-4.5.0/jade/lib/jade.jar"/>
 	<classpathentry kind="output" path="out/production/ASMA"/>
 </classpath>

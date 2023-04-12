@@ -10,14 +10,14 @@ import jade.proto.AchieveREResponder;
 public class StockExchangeAgent extends Agent {
 
 	protected void setup() {
-        System.out.println("[BROKER] Broker Agent " + getAID().getName() + " is ready.");
+        System.out.println("[STOCK] Stock Agent " + getAID().getName() + " is ready.");
         addBehaviour(new StockBehaviour());
     }
 	
 	private class StockBehaviour extends CyclicBehaviour {
 		public void action() {
 			ACLMessage msg = receive();
-			if (msg != null && msg.getPerformative() == ACLMessage.INFORM) {
+			if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
 				addBehaviour(new MyRequestResponder(myAgent, MessageTemplate.MatchPerformative(ACLMessage.REQUEST)));
             } else {
                 block();

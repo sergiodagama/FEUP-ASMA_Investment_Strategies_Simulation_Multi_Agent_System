@@ -9,7 +9,7 @@ public final class Constants {
     public static final String MARKET_NO_MORE_DAYS_MSG = "NO_MORE_DAYS";
     public static final String UNSUPPORTED_ORDER_TYPE = "UNSUPPORTED_ORDER";
     public static final String COMPLETED_ORDER = "COMPLETE_ORDER";
-    public static final String DATA_FILENAME = "../data.json";
+    public static final String DATA_FILENAME = "C:\\Users\\ASUS\\Desktop\\MIEIC\\1anom\\s2\\asma\\data.json";
     public enum ORDER_TYPES {
         BUY("BUY"),
         SELL("SELL"),

@@ -44,7 +44,7 @@ public class JADELauncher {
             ac8.start();
 
             AgentController ac4;
-            Object[] agentArgs4 = {0};
+            Object[] agentArgs4 = {1};
             ac4 = mainContainer.createNewAgent("test-trader", "TraderAgent", agentArgs4);
             ac4.start();
 

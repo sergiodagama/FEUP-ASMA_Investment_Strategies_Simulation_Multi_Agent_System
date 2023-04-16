@@ -12,12 +12,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.*;
 
+import java.util.stream.Collectors;
+
 public class TraderAgent extends Agent {
     private int strategyId;
     private double agent_money;
     private List<List<HashMap<String, HashMap<String, Double>>>> marketHistory;
     private HashMap<String,Integer> agent_stocks;
     private List<Order> agent_orders;
+    private Double current_comission;
 
     protected Double getTotalStocks(){
         Double total = 0.0;
@@ -76,6 +79,7 @@ public class TraderAgent extends Agent {
         marketHistory = new ArrayList<>();
         agent_stocks = new HashMap<String, Integer>();
         agent_orders = new ArrayList<>();
+        current_comission = 0.0;
     }
 
     private class ExecuteStrategyDispatcher extends SSResponderDispatcher {
@@ -101,7 +105,7 @@ public class TraderAgent extends Agent {
             public void action() {
                 // if no more days message from market -> terminate agent
                 if (msg.getContent().equals(Constants.MARKET_NO_MORE_DAYS_MSG)) {
-                    System.out.println("[AGENT] Ended market days with " + getTotalStocks() + " and made " + agent_orders.size() + " orders");
+                    System.out.println("[AGENT] Ended market days with " + (getTotalStocks()+agent_money) + " and made " + agent_orders.size() + " orders");
                     doDelete();
                 }
 
@@ -158,6 +162,9 @@ public class TraderAgent extends Agent {
                 @Override
                 protected void handlePropose(ACLMessage propose, Vector v) {
                     // handle commission offer from Broker agent
+                    current_comission = Double.parseDouble(propose.getContent());
+                    System.out.println("currcom");
+                    System.out.println(current_comission);
                     System.out.println("[TRADER] " + getAID().getName() + " received commission offer: " + propose.getContent() + " from " + propose.getSender());
                 }
 
@@ -233,6 +240,8 @@ public class TraderAgent extends Agent {
                     default:
                         System.out.println("[TRADER] Unknown strategy.");
                 }
+                System.out.println("[AGENT] Ended market days with " + (getTotalStocks()+agent_money) + " and made " + agent_orders.size() + " orders");
+                agent_orders.addAll(result);
                 return result;
             }
 
@@ -264,7 +273,7 @@ public class TraderAgent extends Agent {
                 //iterate through stocks
                 for (int i=0; i< currentDay.size(); i++) {
                     String currentStock = currentDay.get(i).keySet().iterator().next().toString();
-                    System.out.println("stock " + currentStock);
+                    //System.out.println("stock " + currentStock);
                     Double currentClose = currentDay.get(i).get(currentStock).get("close");
                     Double prevClose;
 
@@ -298,6 +307,7 @@ public class TraderAgent extends Agent {
                         if (agent_money>currentClose) {
                             orders.add(new Order(Constants.ORDER_TYPES.BUY, currentClose, 1, currentStock));
                             buyStock(currentStock, 1);
+                            agent_money-=currentClose*(1-current_comission);
                         } /*else {
                             orders.add(new Order(Constants.ORDER_TYPES.SHORT, currentClose, 1, currentStock));
                         }*/
@@ -305,6 +315,7 @@ public class TraderAgent extends Agent {
                         if (hasStock(currentStock,1)) {
                             orders.add(new Order(Constants.ORDER_TYPES.SELL, currentClose, 1, currentStock));
                             sellStock(currentStock,1);
+                            agent_money+=currentClose*(1-current_comission);
                         } /*else {
                             orders.add(new Order(Constants.ORDER_TYPES.SHORT, currentClose, 1, currentStock));
                         }*/
@@ -316,37 +327,44 @@ public class TraderAgent extends Agent {
 
             private List<Order> valueStrategy(){
                 List<Order> orders = new ArrayList<>();
-                int n = marketHistory.size();
-                Double avgPrice = 0.0;
-                Double stdDev = 0.0;
+                Map<String, Double> lastCloses = new HashMap<>();
 
                 List<HashMap<String, HashMap<String, Double>>> currentDay = marketHistory.get(marketHistory.size()-1);
                 //iterate through stocks
-                for (int i=0; i< currentDay.size(); i++){
+                for (int i=0; i< currentDay.size(); i++) {
                     String currentStock = currentDay.get(i).keySet().iterator().next().toString();
+                    System.out.println("stock " + currentStock);
                     Double currentClose = currentDay.get(i).get(currentStock).get("close");
-                    Double cmpClose = currentClose;
 
-                    for (int j = marketHistory.size() - 2; j > 0 && marketHistory.size()-2 > 0; j--) {
-                        String cmpStock = marketHistory.get(j).get(i).keySet().iterator().next().toString();
-                        cmpClose = marketHistory.get(j).get(i).get(currentStock).get("close");
-                        avgPrice += cmpClose;
-                        stdDev += Math.pow(cmpClose, 2);
+                    Double closeSum = currentClose;
+                    List<Double> closes = new ArrayList<>();
+                    Double close;
+                    // Check standard deviation and averages for at least 7 days
+                    for (int j = marketHistory.size() - 2; j > 0 && marketHistory.size()  >= 7; j--) {
+                        close = getDayStockClose(j, currentStock);
+                        closeSum += close;
+                        closes.add(close);
                     }
 
-                    avgPrice = avgPrice/marketHistory.size();
-                    stdDev = Math.sqrt((stdDev / marketHistory.size()) - Math.pow(avgPrice, 2));
+                    Double avgPrice = closeSum/marketHistory.size();
+                    Double stdDev = Math.sqrt(closes.stream().mapToDouble(number -> Math.pow(number - avgPrice, 2)).sum()/(marketHistory.size()-1));
 
                     // Determine whether to buy, sell, or hold
-                    if (currentClose < avgPrice - 2 * stdDev) {
+                    if (currentClose < avgPrice + stdDev && currentClose > avgPrice) {
                         // Buy order
-                        orders.add(new Order(Constants.ORDER_TYPES.BUY, currentClose, 1, currentStock));
+                        if (agent_money>currentClose) {
+                            orders.add(new Order(Constants.ORDER_TYPES.BUY, currentClose, 1, currentStock));
+                            buyStock(currentStock, 1);
+                        }
                     } else if (currentClose < avgPrice - 2 * stdDev) {
                         // Sell order
-                        orders.add(new Order(Constants.ORDER_TYPES.SELL, currentClose, 1, currentStock));
+                        if (hasStock(currentStock,1)) {
+                            orders.add(new Order(Constants.ORDER_TYPES.SELL, currentClose, 1, currentStock));
+                            sellStock(currentStock,1);
+                        }
                     }
                 }
-
+                System.out.println("[AGENT] made " + Integer.toString(orders.size()) + " orders on day " + marketHistory.size());
                 return orders;
             }
 
